@@ -1,0 +1,36 @@
+dbt_github_action:
+  outputs:
+    dev:
+      dataset: dbt
+      job_execution_timeout_seconds: 150
+      job_retries: 1
+      location: us-central1
+      method: oauth
+      priority: interactive
+      project: dbt-learning-bq
+      threads: 2
+      type: bigquery
+  target: dev
+demo_dbt:
+  outputs:
+    dev:
+      dataset: Learning_bq
+      job_execution_timeout_seconds: 200
+      job_retries: 1
+      location: us-central1
+      method: oauth
+      priority: interactive
+      project: learning-gcp-self-test
+      threads: 2
+      type: bigquery
+    stg:
+      dataset: dbt
+      job_execution_timeout_seconds: 200
+      job_retries: 1
+      location: US
+      method: oauth
+      priority: interactive
+      project: dbt-learning-bq
+      threads: 2
+      type: bigquery
+  target: stg
