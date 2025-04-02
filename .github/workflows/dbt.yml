@@ -50,7 +50,7 @@ jobs:
         echo "threads: 1" >> ~/.dbt/profiles.yml
         echo "location: us-central1" >> ~/.dbt/profiles.yml
 
-    # Run DBT models
+    # Run DBT models 
     - name: Run DBT models
       run: |
         dbt run --profiles-dir ~/.dbt
