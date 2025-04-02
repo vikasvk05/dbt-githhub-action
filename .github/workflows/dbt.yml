@@ -37,8 +37,9 @@ jobs:
     # Authenticate with Google Cloud service account
     - name: Set up Google Cloud service account
       run: |
-        echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}"
         echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > /tmp/service_account_key.json
+        # Check if the JSON key is properly written
+        cat /tmp/service_account_key.json
         gcloud auth activate-service-account --key-file=/tmp/service_account_key.json
 
     # Set up environment variables and DBT profile with us-central1 location
