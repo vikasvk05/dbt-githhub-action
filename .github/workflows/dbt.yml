@@ -34,7 +34,7 @@ jobs:
         credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }} # Your service account key stored in GitHub Secrets
 
     # Set up Google Cloud CLI
-    - uses: google-github-actions/setup-gcloud@master
+    - uses: google-github-actions/setup-gcloud@v0.9.1
       with:
         project_id: ${{ env.PROJECT_ID }}  # Ensure you have set PROJECT_ID as an environment variable or in secrets
         export_default_credentials: true
