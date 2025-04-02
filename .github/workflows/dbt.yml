@@ -21,26 +21,41 @@ jobs:
       with:
         python-version: '3.9'
 
-    # dbt install
+    # Install DBT and dependencies
     - name: Install DBT and dependencies
       run: |
         python -m pip install --upgrade pip
         pip install dbt-bigquery google-cloud
 
-    # - name: Set up Google Cloud service account
-    #   run: |
-    #     echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > /tmp/service_account_key.json
-    #     gcloud auth activate-service-account --key-file=/tmp/service_account_key.json
+    # Install Google Cloud SDK (gcloud) for authentication
+    - name: Install Google Cloud SDK
+      run: |
+        curl https://sdk.cloud.google.com | bash
+        source $HOME/google-cloud-sdk/path.bash.inc
+        gcloud --version
 
-    # - name: Set up environment variable for DBT profile
-    #   run: |
-    #     echo "keyfile: /tmp/service_account_key.json" >> ~/.dbt/profiles.yml
-    #     echo "project: your-gcp-project-id" >> ~/.dbt/profiles.yml
-    #     echo "dataset: your_bigquery_dataset" >> ~/.dbt/profiles.yml
-    #     echo "threads: 1" >> ~/.dbt/profiles.yml
-    #     echo "location: US" >> ~/.dbt/profiles.yml
+    # Authenticate with Google Cloud service account
+    - name: Set up Google Cloud service account
+      run: |
+        echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > /tmp/service_account_key.json
+        gcloud auth activate-service-account --key-file=/tmp/service_account_key.json
 
-    # - name: Run DBT models
-    #   run: |
-    #     dbt run --profiles-dir ~/.dbt
+    # Set up environment variables and DBT profile with us-central1 location
+    - name: Set up DBT profile for BigQuery
+      run: |
+        mkdir -p ~/.dbt
+        echo "dbt_github_action:
+          target: dev
+          outputs:
+            dev:
+              type: bigquery
+              project: dbt-learning-bq
+              dataset: dbt
+              threads: 1
+              keyfile: /tmp/service_account_key.json
+              location: us-central1" > ~/.dbt/profiles.yml
 
+    # Run DBT models
+    - name: Run DBT models
+      run: |
+        dbt run --profiles-dir ~/.dbt
