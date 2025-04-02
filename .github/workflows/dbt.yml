@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch:  # Manual trigger
 
 jobs:
   run-dbt:
@@ -22,38 +22,41 @@ jobs:
       with:
         python-version: '3.9'
 
-    # Install DBT and dependencies
     - name: Install DBT and dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install dbt-bigquery google-cloud
+        pip install dbt-bigquery google-cloud google-auth google-auth-oauthlib google-auth-httplib2
 
-    # Install Google Cloud SDK (gcloud) for authentication
-    - name: Install Google Cloud SDK
-      run: |
-        curl https://sdk.cloud.google.com | bash
-        source $HOME/google-cloud-sdk/path.bash.inc
-        gcloud --version
-
-    # Authenticate with Google Cloud service account
-    - name: Set up Google Cloud service account
+    # Authenticate using Google Auth Library (Python)
+    - name: Authenticate with Google Cloud (Python)
       run: |
         echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > /tmp/service_account_key.json
-        # Check if the JSON key is properly written
-        cat /tmp/service_account_key.json
-        gcloud auth activate-service-account --key-file=/tmp/service_account_key.json
+        python -c "
+        import json
+        from google.oauth2 import service_account
+        from google.auth.transport.requests import Request
+        import google.auth
 
-    # Set up environment variables and DBT profile with us-central1 location
+        # Load credentials from the JSON key
+        with open('/tmp/service_account_key.json') as key_file:
+              credentials = service_account.Credentials.from_service_account_info(
+                json.load(key_file), scopes=['https://www.googleapis.com/auth/cloud-platform'])
+
+        # Check the credentials are working by refreshing them
+        credentials.refresh(Request())
+        "
+
+    # Set up DBT profile
     - name: Set up DBT profile for BigQuery
       run: |
         mkdir -p ~/.dbt
-        echo "dbt_github_action:
+        echo "your_project_name:
           target: dev
           outputs:
             dev:
               type: bigquery
-              project: dbt-learning-bq
-              dataset: dbt
+              project: your-gcp-project-id
+              dataset: your_bigquery_dataset
               threads: 1
               keyfile: /tmp/service_account_key.json
               location: us-central1" > ~/.dbt/profiles.yml
