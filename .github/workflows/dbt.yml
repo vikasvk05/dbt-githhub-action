@@ -59,7 +59,7 @@ jobs:
       
     - name: Install dbt dependencies
       run: |
-        dbt deps --project-dir=dbt_github_action
+        dbt deps
     
     - name: run dbt debug
       run: |
