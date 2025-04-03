@@ -7,17 +7,21 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   run-dbt:
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
@@ -31,14 +35,17 @@ jobs:
     - name: Authenticate with Google Cloud
       uses: google-github-actions/auth@v2
       with:
-        credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  # Ensure your service account JSON key is stored here
+        workload_identity_provider: projects/867824075452/locations/global/workloadIdentityPools/dbt-wif-github-action-pool/providers/github 
+        service_account: dbt-wif-p@dbt-learning-bq.iam.gserviceaccount.com	
+      # with:
+      #   credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  # Ensure your service account JSON key is stored here
 
     # Set up Google Cloud SDK using setup-gcloud@v2
     - name: Set up Google Cloud SDK
       uses: google-github-actions/setup-gcloud@v2
-      with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}  # Ensure GCP_PROJECT_ID is set as a secret or environment variable
-        export_default_credentials: true
+      # with:
+      #   project_id: ${{ secrets.GCP_PROJECT_ID }}  # Ensure GCP_PROJECT_ID is set as a secret or environment variable
+      #   export_default_credentials: true
 
     # Set up DBT profile for BigQuery
     - name: Set up DBT profile
