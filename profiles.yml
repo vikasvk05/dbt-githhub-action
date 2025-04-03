@@ -18,7 +18,7 @@ dbt_github_action:
       method: service-account
       priority: interactive
       project: dbt-learning-bq
-      keyfile: /home/vikas/dbt/dbt-learning-bq-2.json
+      # keyfile: /home/vikas/dbt/dbt-learning-bq-2.json
       threads: 2
       type: bigquery
   target: dev_sa
