@@ -61,9 +61,9 @@ jobs:
       run: |
         dbt deps
     
-    - name: run dbt debug
-      run: |
-        dbt debug
+    # - name: run dbt debug
+    #   run: |
+    #     dbt debug
     
     # Run DBT models 
     - name: Run DBT models
