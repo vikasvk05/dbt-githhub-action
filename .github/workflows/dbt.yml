@@ -56,7 +56,15 @@ jobs:
         echo "dataset: your_bigquery_dataset" >> ~/.dbt/profiles.yml
         echo "threads: 1" >> ~/.dbt/profiles.yml
         echo "location: us-central1" >> ~/.dbt/profiles.yml
-
+      
+    - name: Install dbt dependencies
+      run: |
+        dbt deps --project-dir=dbt_github_action
+    
+    - name: run dbt debug
+      run: |
+        dbt debug
+    
     # Run DBT models 
     - name: Run DBT models
       run: |
