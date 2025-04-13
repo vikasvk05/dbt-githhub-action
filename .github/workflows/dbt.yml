@@ -66,7 +66,7 @@ jobs:
     #   run: |
     #     dbt debug
     
-    # Run DBT models 
+    # Run DBT models dbt run --profiles-dir ~/.dbt
     - name: Run DBT models
       run: |
-        dbt run --profiles-dir ~/.dbt
+        dbt run 
