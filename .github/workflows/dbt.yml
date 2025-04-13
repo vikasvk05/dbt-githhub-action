@@ -58,22 +58,37 @@ jobs:
     #     echo "threads: 1" >> ~/.dbt/profiles.yml
     #     echo "location: us-central1" >> ~/.dbt/profiles.yml
 
-    - name : set up DBT profile
+    # - name : set up DBT profile
+    #   run: |
+    #     mkdir -p ~/.dbt
+    #     cat > ~/.dbt/profiles.yml <<EOF
+    #     dbt_github_action:
+    #     target: dev
+    #     outputs:
+    #       dev:
+    #       type: bigquery
+    #       method: oauth
+    #       project: dbt-learning-bq
+    #       dataset: dbt
+    #       threads: 1
+    #       location: us-central1
+    #     EOF
+    - name: Set up DBT profile
       run: |
         mkdir -p ~/.dbt
         cat > ~/.dbt/profiles.yml <<EOF
         dbt_github_action:
-        target: dev
-        outputs:
-          dev:
-          type: bigquery
-          method: oauth
-          project: dbt-learning-bq
-          dataset: dbt
-          threads: 1
-          location: us-central1
+          target: dev
+          outputs:
+            dev:
+              type: bigquery
+              method: oauth
+              project: dbt-learning-bq
+              dataset: dbt
+              threads: 1
+              location: us-central1
         EOF
-      
+
     - name: Install dbt dependencies
       run: |
         dbt deps
@@ -82,6 +97,10 @@ jobs:
     #   run: |
     #     dbt debug
     
+    # - name: Run dbt debug
+    #   run: dbt debug --profiles-dir ~/.dbt
+
+
     # Run DBT models
     - name: Run DBT models
       run: |
