@@ -60,7 +60,7 @@ jobs:
 
     - name : set up DBT profile
       run: |
-        mkfir -p ~/.dbt
+        mkdir -p ~/.dbt
         cat > ~/.dbt/profiles.yml <<EOF
         dbt_github_action:
         target: dev
