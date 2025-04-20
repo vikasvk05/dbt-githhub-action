@@ -4,43 +4,104 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   run-dbt:
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
-    # dbt install
+    # Install DBT and dependencies
     - name: Install DBT and dependencies
       run: |
         python -m pip install --upgrade pip
         pip install dbt-bigquery google-cloud
 
-    # - name: Set up Google Cloud service account
-    #   run: |
-    #     echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" > /tmp/service_account_key.json
-    #     gcloud auth activate-service-account --key-file=/tmp/service_account_key.json
+    # Authenticate with Google Cloud using the Service Account Key
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        workload_identity_provider: projects/867824075452/locations/global/workloadIdentityPools/dbt-wif-github-action-pool/providers/github 
+        service_account: dbt-wif-p@dbt-learning-bq.iam.gserviceaccount.com	
+      # with:
+      #   credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  # Ensure your service account JSON key is stored here
 
-    # - name: Set up environment variable for DBT profile
+    # Set up Google Cloud SDK using setup-gcloud@v2
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v2
+      # with:
+      #   project_id: ${{ secrets.GCP_PROJECT_ID }}  # Ensure GCP_PROJECT_ID is set as a secret or environment variable
+      #   export_default_credentials: true
+
+    # Set up DBT profile for BigQuery
+    # - name: Set up DBT profile
     #   run: |
-    #     echo "keyfile: /tmp/service_account_key.json" >> ~/.dbt/profiles.yml
-    #     echo "project: your-gcp-project-id" >> ~/.dbt/profiles.yml
+    #     mkdir -p ~/.dbt
+    #     echo "keyfile: /tmp/service_account_key.json" > ~/.dbt/profiles.yml
+    #     echo "project: ${{ secrets.GCP_PROJECT_ID }}" >> ~/.dbt/profiles.yml  # Use your GCP project ID
     #     echo "dataset: your_bigquery_dataset" >> ~/.dbt/profiles.yml
     #     echo "threads: 1" >> ~/.dbt/profiles.yml
-    #     echo "location: US" >> ~/.dbt/profiles.yml
+    #     echo "location: us-central1" >> ~/.dbt/profiles.yml
 
+    # - name : set up DBT profile
+    #   run: |
+    #     mkdir -p ~/.dbt
+    #     cat > ~/.dbt/profiles.yml <<EOF
+    #     dbt_github_action:
+    #     target: dev
+    #     outputs:
+    #       dev:
+    #       type: bigquery
+    #       method: oauth
+    #       project: dbt-learning-bq
+    #       dataset: dbt
+    #       threads: 1
+    #       location: us-central1
+    #     EOF
+    - name: Set up DBT profile
+      run: |
+        mkdir -p ~/.dbt
+        cat > ~/.dbt/profiles.yml <<EOF
+        dbt_github_action:
+          target: dev
+          outputs:
+            dev:
+              type: bigquery
+              method: oauth
+              project: dbt-learning-bq
+              dataset: dbt
+              threads: 1
+              location: us-central1
+        EOF
+
+    - name: Install dbt dependencies
+      run: |
+        dbt deps
+    
+    - name: run dbt debug
+      run: |
+        dbt debug --profiles-dir ~/.dbt
+    
+    - name: Run dbt test
+      run: dbt test --profiles-dir ~/.dbt
+
+
+    # # Run DBT models
     # - name: Run DBT models
     #   run: |
     #     dbt run --profiles-dir ~/.dbt
-

@@ -1,0 +1,19 @@
+version: 2
+
+models:
+  - name: dim_content
+    columns:
+      - name: content_id
+        tests: [not_null, unique]
+
+  - name: fact_viewing_sessions
+    columns:
+      - name: session_id
+        tests: [not_null, unique]
+      - name: profile_id
+        tests: [not_null]
+
+  - name: fact_engagement_metrics
+    columns:
+      - name: profile_id
+        tests: [not_null]

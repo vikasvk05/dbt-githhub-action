@@ -8,6 +8,7 @@ config-version: 2
 
 # This setting configures which "profile" dbt uses for this project.
 profile: 'dbt_github_action'
+# target-path: './target'
 
 # These configurations specify where dbt should look for different types of files.
 # The `model-paths` config, for example, states that models in this project can be
@@ -35,3 +36,12 @@ models:
     # Config indicated by + and applies to all files under models/example/
     example:
       +materialized: view
+    stagging:
+      +materialized: table
+      dataset : netflix_staging
+
+seeds:
+  dbt_github_action:  # your project name
+    netflix_raw:       # seed group name (can be anything)
+      quote_columns: false
+      schema: netflix_raw  # 👈 THIS sets the dataset to write to

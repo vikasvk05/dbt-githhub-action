@@ -1,0 +1,5 @@
+profile_id,user_id,name,age_group,preferred_language
+1,1,John Jr.,Teen,English
+2,1,Jane,Adult,English
+3,2,Emma,Adult,Spanish
+4,3,Alex,Teen,Hindi
