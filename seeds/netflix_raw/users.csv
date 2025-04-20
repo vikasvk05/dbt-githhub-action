@@ -1,0 +1,4 @@
+user_id,email,signup_date,country
+1,john@example.com,2022-01-01,USA
+2,emma@example.com,2022-02-10,UK
+3,alex@example.com,2023-03-15,India

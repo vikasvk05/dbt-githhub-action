@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: dbt_netflix_raw           # <- This is your dataset name (schema in BigQuery)
+    database: dbt-learning-bq   # <- Optional in BigQuery, but good to include
+    tables:
+      - name: users
+      - name: profiles
+      - name: content
+      - name: genres
+      - name: content_genres
+      - name: devices
+      - name: subscription_plans
+      - name: viewing_sessions

@@ -21,7 +21,7 @@ dbt_github_action:
       # keyfile: /home/vikas/dbt/dbt-learning-bq-2.json
       threads: 2
       type: bigquery
-  target: dev_sa
+  target: dev
 demo_dbt:
   outputs:
     dev:
