@@ -95,10 +95,10 @@ jobs:
     
     - name: run dbt debug
       run: |
-        dbt debug
+        dbt debug --profiles-dir ~/.dbt
     
-    # - name: Run dbt debug
-    #   run: dbt debug --profiles-dir ~/.dbt
+    - name: Run dbt test
+      run: dbt test --profiles-dir ~/.dbt
 
 
     # # Run DBT models
